@@ -1,0 +1,30 @@
+# Node modules
+node_modules/
+
+# Environment variables
+*.env
+
+# React specific
+build/
+.cache/
+coverage/
+*.log
+
+# Go specific
+bin/
+pkg/
+*.o
+*.a
+*.so
+*.exe
+*.test
+vendor/
+*.out
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+
