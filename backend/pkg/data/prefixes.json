@@ -1,0 +1,45 @@
+[
+  {
+  "prefix": 1,
+  "operator": "",
+  "country_code": 1,
+  "region": "",
+  "country": "USA"
+  },
+  {
+  "prefix": 1,
+  "operator": "",
+  "country_code": 1,
+  "region": "",
+  "country": "Canada"
+  },
+  {
+  "prefix": 143,
+  "operator": "",
+  "country_code": 1,
+  "region": "",
+  "country": "Canada"
+  },
+  {
+  "prefix": 1437,
+  "operator": "",
+  "country_code": 1,
+  "region": "Ontario",
+  "country": "Canada"
+  },
+  {
+  "prefix": 1437329,
+  "operator": "Lucky Mobile",
+  "country_code": 1,
+  "region": "Ontario",
+  "country": "Canada"
+  },
+  {
+  "prefix": 14372,
+  "operator": "",
+  "country_code": 1,
+  "region": "Ontario",
+  "country": "Canada"
+  }
+]
+

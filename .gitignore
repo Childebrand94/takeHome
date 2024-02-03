@@ -12,7 +12,6 @@ coverage/
 
 # Go specific
 bin/
-pkg/
 *.o
 *.a
 *.so
