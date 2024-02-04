@@ -62,12 +62,6 @@ func processPhoneNumber(phoneNumber string) (models.PrefixInfo, error) {
 		}
 	}
 
-	if longestPrefix == "" {
-		return models.PrefixInfo{},
-			fmt.Errorf("no matching prefix found for phone number: %s",
-				phoneNumber)
-	}
-
 	return dataMap[longestPrefix], nil
 }
 
