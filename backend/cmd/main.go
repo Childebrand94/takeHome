@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/Childebrand94/takeHomePhoneNumber/pkg/handler"
@@ -16,5 +17,6 @@ func main() {
 	})
 	queryHandler := &handler.Query{}
 	r.Post("/submit", queryHandler.Parse)
+	fmt.Println("Starting Server...")
 	http.ListenAndServe(":3000", r)
 }
