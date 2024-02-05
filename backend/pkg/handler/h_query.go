@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -30,6 +31,7 @@ func (q *Query) Parse(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resp, err := json.Marshal(data)
+	fmt.Printf("\n This is the data Marshaled %+v", data)
 	if err != nil {
 		models.SendError(w, http.StatusInternalServerError, "Failed to prepare response", err)
 		return

@@ -1,6 +1,7 @@
 package models
 
 type PrefixInfo struct {
+	Prefix      int    `json:"prefix"`
 	Operator    string `json:"operator"`
 	CountryCode int    `json:"country_code"`
 	Region      string `json:"region"`

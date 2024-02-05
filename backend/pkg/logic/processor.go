@@ -27,10 +27,7 @@ func createMap() (map[string]models.PrefixInfo, error) {
 		return nil, fmt.Errorf("failed to read data.json: %w", err)
 	}
 
-	var tempData []struct {
-		Prefix int `json:"prefix"`
-		models.PrefixInfo
-	}
+	var tempData []models.PrefixInfo
 
 	if err = json.Unmarshal(byteValue, &tempData); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal JSON data: %w", err)
@@ -38,7 +35,7 @@ func createMap() (map[string]models.PrefixInfo, error) {
 
 	prefixMap := make(map[string]models.PrefixInfo)
 	for _, item := range tempData {
-		prefixMap[fmt.Sprint(item.Prefix)] = item.PrefixInfo
+		prefixMap[fmt.Sprint(item.Prefix)] = item
 	}
 
 	return prefixMap, nil
