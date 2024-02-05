@@ -1,12 +1,12 @@
 export type Resp = {
-    prfixInfo: PhoneNumberInfo
+    prefixInfo: PhoneNumberInfo
     message: string
-
 }
 
 export type PhoneNumberInfo = {
+    prefix: number;
     operator: string;
-    countryCode: number;
+    country_code: number;
     region: string;
     country: string;
 }

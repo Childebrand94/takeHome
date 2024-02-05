@@ -1,6 +1,11 @@
 import React, { useState, ChangeEvent } from "react";
+import { Resp } from "../types/types";
 
-export const Form: React.FC = () => {
+type FormProps = {
+    setResp: React.Dispatch<React.SetStateAction<Resp | null>>;
+}
+
+export const Form: React.FC<FormProps> = ({ setResp }) => {
     const [phoneNumber, setPhoneNumber] = useState("");
     const [message, setMessage] = useState("");
 
@@ -14,7 +19,7 @@ export const Form: React.FC = () => {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const formData = { phoneNumber, message }; // Construct the form data object here
+        const formData = { phoneNumber, message };
         const url = "http://localhost:3000/submit";
 
         try {
@@ -31,7 +36,20 @@ export const Form: React.FC = () => {
             }
 
             const data = await response.json();
-            console.log(data);
+
+            const transformData: Resp = {
+                prefixInfo: {
+                    prefix: data.prefix_info.prefix,
+                    operator: data.prefix_info.operator,
+                    country_code: data.prefix_info.country_code,
+                    region: data.prefix_info.region,
+                    country: data.prefix_info.country,
+                },
+                message: data.message,
+            }
+
+            setResp(transformData)
+
             setPhoneNumber("");
             setMessage("");
             // Provide feedback to the user
