@@ -1,40 +1,50 @@
 package logic
 
 import (
+	"embed"
 	"encoding/json"
 	"fmt"
 	"html"
-	"io"
+	"log"
 	"net/url"
-	"os"
 	"regexp"
 
 	"github.com/Childebrand94/takeHomePhoneNumber/pkg/models"
 	"mvdan.cc/xurls/v2"
 )
 
-// Open data set and create a hash map of all prefix's where the prefix
-// is the key
-func createMap() (map[string]models.PrefixInfo, error) {
-	jsonFile, err := os.Open("pkg/data/data.json")
-	if err != nil {
-		return nil, fmt.Errorf("failed to open data.json: %w", err)
-	}
-	defer jsonFile.Close()
+// Embed the data.json file
 
-	byteValue, err := io.ReadAll(jsonFile)
+//go:embed data.json
+var dataFS embed.FS
+
+var globalDataMap map[string]models.PrefixInfo
+
+// Initialize the URL regex
+var urlRegex = regexp.MustCompile(xurls.Strict().String())
+
+// Initialize data to a map once on program load
+func init() {
+	data, err := dataFS.ReadFile("data.json")
 	if err != nil {
-		return nil, fmt.Errorf("failed to read data.json: %w", err)
+		log.Fatalf("Error reading embedded data.json: %v", err)
 	}
 
 	var tempData []models.PrefixInfo
-
-	if err = json.Unmarshal(byteValue, &tempData); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal JSON data: %w", err)
+	if err := json.Unmarshal(data, &tempData); err != nil {
+		log.Fatalf("Error unmarshaling data.json: %v", err)
 	}
 
+	globalDataMap, err = createMap(tempData)
+	if err != nil {
+		log.Fatalf("Error creating data map: %v", err)
+	}
+}
+
+// Convert the data.json into a hash map due to constant look ups for prefix match
+func createMap(data []models.PrefixInfo) (map[string]models.PrefixInfo, error) {
 	prefixMap := make(map[string]models.PrefixInfo)
-	for _, item := range tempData {
+	for _, item := range data {
 		prefixMap[fmt.Sprint(item.Prefix)] = item
 	}
 
@@ -43,27 +53,28 @@ func createMap() (map[string]models.PrefixInfo, error) {
 
 // Create the longest prefix by iterating over the given phone number creating a
 // string that matches the longest prefix
-func processPhoneNumber(phoneNumber string) (models.PrefixInfo, error) {
-	dataMap, err := createMap()
-	if err != nil {
-		return models.PrefixInfo{}, fmt.Errorf("error creating data map: %w", err)
-	}
+func processPhoneNumber(phoneNumber string) (string, error) {
 
 	var longestPrefix string
 
 	for i := 1; i <= len(phoneNumber); i++ {
 		prefix := phoneNumber[:i]
 
-		if _, ok := dataMap[prefix]; ok {
+		if _, ok := globalDataMap[prefix]; ok {
 			longestPrefix = prefix
 		}
 	}
 
-	return dataMap[longestPrefix], nil
+	return longestPrefix, nil
 }
 
-// initialize once not on every function call to process message
-var urlRegex = regexp.MustCompile(xurls.Strict().String())
+// Return empty Prefix Info struct on non matches
+func getPrefixInfo(prefix string) models.PrefixInfo {
+	if prefixInfo, ok := globalDataMap[prefix]; ok {
+		return prefixInfo
+	}
+	return models.PrefixInfo{}
+}
 
 // Using the xurls library to find and replace all URLs, with URLs wrapped in
 // <a> tags for the front end to render.
@@ -85,11 +96,13 @@ func processMessage(message string) (string, error) {
 
 func ProcessData(payload models.Query) (models.Resp, error) {
 
-	prefix_info, err := processPhoneNumber(payload.Phone_number)
+	prefix, err := processPhoneNumber(payload.Phone_number)
 	if err != nil {
 		return models.Resp{},
-			fmt.Errorf("Error has occurred processing phone number: %w", err)
+			fmt.Errorf("Error has occurred finding longest prefix: %w", err)
 	}
+
+	prefixInfo := getPrefixInfo(prefix)
 
 	formatted_message, err := processMessage(payload.Message)
 	if err != nil {
@@ -98,7 +111,7 @@ func ProcessData(payload models.Query) (models.Resp, error) {
 	}
 
 	var resp models.Resp
-	resp.PrefixInfo = prefix_info
+	resp.PrefixInfo = prefixInfo
 	resp.Message = formatted_message
 
 	return resp, nil
