@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/Childebrand94/takeHomePhoneNumber/pkg/handler"
 	"github.com/go-chi/chi/v5"
@@ -11,10 +12,17 @@ import (
 )
 
 func main() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		fmt.Println("PORT environment variable not set, defaulting to 8080")
+		port = "8080"
+	}
+	fmt.Println("Using port:", port)
+
 	r := chi.NewRouter()
 
 	cors := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:5173"},
+		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},
@@ -31,5 +39,7 @@ func main() {
 
 	// Start Server
 	fmt.Println("Starting Server...")
-	http.ListenAndServe(":3000", r)
+	if err := http.ListenAndServe(":"+port, r); err != nil {
+		fmt.Printf("Error starting server: %v\n", err)
+	}
 }

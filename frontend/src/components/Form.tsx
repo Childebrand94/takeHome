@@ -17,10 +17,12 @@ export const Form: React.FC<FormProps> = ({ setResp }) => {
         setMessage(e.target.value);
     };
 
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const formData = { phoneNumber, message };
-        const url = "http://localhost:3000/submit";
+        const url = `${backendUrl}/submit`
 
         try {
             const response = await fetch(url, {
