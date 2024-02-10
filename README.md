@@ -41,6 +41,8 @@ Requirements Checklist
 
 - Go
 - TypeScript
+- Docker
+- Docker Compose
 
 ## Installation
 
@@ -50,26 +52,11 @@ Requirements Checklist
 git clone https://github.com/Childebrand94/takeHome.git
 cd takeHome
 ```
-### Setting Up the Backend (Go)
+### Run Docker compose 
+```
+docker-compose up
+```
+### Open Browser
 
-Navigate to the backend directory and build the Go application:
-```
-cd backend
-go cmd/build
-```
-To start the backend server, run:
-```
-./main
-```
-## Setting Up the Frontend (React TypeScript)
-
-Navigate to the frontend directory from the root of the project:
-```
-npm install
-```
-Start the frontend application:
-```
-npm start
-```
-
+<a href="http://localhost/80"> http://localhost/:80 </a>
      
